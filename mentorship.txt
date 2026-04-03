@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MentorMatch | Full-Stack Mentorship Platform</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #f0f4fa 0%, #e6edf4 100%);
+            color: #0a2540;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* main container */
+        .app-container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* header section */
+        .hero-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+        }
+
+        .hero-header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f2b3d, #1b5a7a, #2c7da0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hero-header p {
+            font-size: 1.1rem;
+            color: #2c4e6e;
+            margin-top: 0.6rem;
+            font-weight: 500;
+        }
+
+        /* two column layout */
+        .dashboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        /* card style */
+        .card-panel {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0,0,0,0.03);
+            padding: 1.8rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(100, 150, 180, 0.2);
+        }
+
+        .mentors-panel {
+            flex: 1.6;
+            min-width: 300px;
+        }
+
+        .requests-panel {
+            flex: 1.2;
+            min-width: 320px;
+        }
+
+        .panel-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-left: 5px solid #2c7da0;
+            padding-left: 1rem;
+        }
+
+        /* mentor cards grid */
+        .mentors-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            max-height: 520px;
+            overflow-y: auto;
+            padding-right: 0.4rem;
+        }
+
+        .mentor-card {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.3rem;
+            border: 1px solid #e2edf2;
+            transition: all 0.25s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .mentor-card:hover {
+            border-color: #bdd9e8;
+            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .mentor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mentor-name {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #0f2b3d;
+        }
+
+        .expertise-tag {
+            background: #e1f0f7;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1b5a7a;
+        }
+
+        .mentor-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 0.7rem 0 0.9rem 0;
+            font-size: 0.8rem;
+        }
+
+        .badge-domain {
+            background: #f0f3f8;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .request-btn {
+            background: linear-gradient(95deg, #1e4a76, #2c7da0);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 0.6rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .request-btn:hover {
+            background: #0f3b5e;
+            transform: scale(0.98);
+        }
+
+        .request-btn:disabled {
+            background: #9bb7cd;
+            cursor: not-allowed;
+        }
+
+        /* request list styles */
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 520px;
+            overflow-y: auto;
+        }
+
+        .request-card {
+            background: #ffffff;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            border-left: 4px solid;
+            transition: 0.1s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .request-card.pending {
+            border-left-color: #f59e0b;
+            background: #fffef7;
+        }
+
+        .request-card.approved {
+            border-left-color: #10b981;
+            background: #f6fef9;
+        }
+
+        .request-card.rejected {
+            border-left-color: #ef4444;
+            background: #fff8f8;
+        }
+
+        .req-mentor-name {
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .req-student {
+            font-size: 0.8rem;
+            color: #2c5a74;
+            margin: 0.4rem 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            margin-top: 0.5rem;
+        }
+
+        .status-pending {
+            background: #ffedd5;
+            color: #b45309;
+        }
+
+        .status-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-buttons {
+            margin-top: 0.7rem;
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .btn-approve, .btn-reject {
+            border: none;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-reject:hover {
+            background: #e2e8f0;
+        }
+
+        /* add mentor form */
+        .add-mentor-section {
+            margin-top: 1.8rem;
+            background: #f8fafc;
+            border-radius: 1.2rem;
+            padding: 1rem;
+        }
+
+        .form-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .input-field label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #2c5a74;
+        }
+
+        .input-field input, .input-field select {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #cbdbe6;
+            font-family: inherit;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        .btn-add {
+            background: #0f2b3d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* toast message */
+        .toast-notify {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1200;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #6a8eaa;
+            font-size: 0.9rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="hero-header">
+        <h1><i class="fas fa-chalkboard-user"></i> MentorMatch</h1>
+        <p>Connect with industry mentors · Submit requests · Real-time approval system (Frontend + Backend integrated)</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- LEFT: Mentors Directory -->
+        <div class="card-panel mentors-panel">
+            <div class="panel-title">
+                <i class="fas fa-users"></i> Expert Mentors
+            </div>
+            <div id="mentorsListContainer" class="mentors-grid">
+                <div class="empty-state"><i class="fas fa-spinner fa-pulse"></i> Loading mentors...</div>
+            </div>
+
+            <div class="add-mentor-section">
+                <div class="form-flex">
+                    <div class="input-field">
+                        <label><i class="fas fa-user"></i> Name</label>
+                        <input type="text" id="mentorNameInput" placeholder="e.g., Dr. Sarah Chen">
+                    </div>
+                    <div class="input-field">
+                        <label><i class="fas fa-code"></i> Expertise</label>
+                        <input type="text" id="mentorExpertiseInput" placeholder="AI, Cloud, Design">
+                    </div>
+                    <div class="input-field">
+                        <label><i class="fas fa-layer-group"></i> Domain</label>
+                        <select id="mentorDomainSelect">
+                            <option>Technology</option>
+                            <option>Business</option>
+                            <option>Design</option>
+                            <option>Marketing</option>
+                            <option>Data Science</option>
+                        </select>
+                    </div>
+                    <button id="createMentorBtn" class="btn-add"><i class="fas fa-plus-circle"></i> Add Mentor</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Mentorship Requests Panel -->
+        <div class="card-panel requests-panel">
+            <div class="panel-title">
+                <i class="fas fa-envelope-open-text"></i> Mentorship Requests
+            </div>
+            <div id="requestsListContainer" class="requests-list">
+                <div class="empty-state"><i class="fas fa-inbox"></i> No requests yet. Click request on any mentor!</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="globalToast" class="toast-notify">✨ Action completed</div>
+
+<script>
+    // **********************************************
+    // SIMULATED BACKEND (in-memory database + API)
+    // **********************************************
+    // Data stores
+    let mentorsDB = [];
+    let requestsDB = [];
+
+    // Helper: generate unique id
+    function uuid() {
+        return Date.now() + '-' + Math.random().toString(36).substring(2, 10);
+    }
+
+    // ---------- BACKEND API (async simulation) ----------
+    const backendAPI = {
+        // Mentor endpoints
+        getAllMentors: async () => {
+            await delay(180);
+            return [...mentorsDB];
+        },
+        addMentor: async (mentorData) => {
+            await delay(250);
+            if (!mentorData.name || !mentorData.expertise) throw new Error("Name and expertise required");
+            const newMentor = {
+                id: uuid(),
+                name: mentorData.name.trim(),
+                expertise: mentorData.expertise.trim(),
+                domain: mentorData.domain,
+                createdAt: new Date().toISOString()
+            };
+            mentorsDB.push(newMentor);
+            return newMentor;
+        },
+        // Request endpoints
+        getAllRequests: async () => {
+            await delay(150);
+            return [...requestsDB];
+        },
+        createRequest: async (mentorId, studentName, studentEmail) => {
+            await delay(300);
+            const mentorExists = mentorsDB.find(m => m.id === mentorId);
+            if (!mentorExists) throw new Error("Mentor not found");
+            if (!studentName?.trim() || !studentEmail?.trim()) throw new Error("Student name and email required");
+            const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+            if (!emailRegex.test(studentEmail)) throw new Error("Please provide a valid email address");
+            
+            // Avoid duplicate pending request from same student & mentor
+            const duplicate = requestsDB.find(r => r.mentorId === mentorId && r.studentEmail === studentEmail && r.status === 'pending');
+            if (duplicate) throw new Error("You already have a pending request with this mentor");
+            
+            const newRequest = {
+                id: uuid(),
+                mentorId: mentorId,
+                studentName: studentName.trim(),
+                studentEmail: studentEmail.trim(),
+                status: 'pending',   // pending, approved, rejected
+                requestedAt: new Date().toISOString()
+            };
+            requestsDB.push(newRequest);
+            return newRequest;
+        },
+        updateRequestStatus: async (requestId, newStatus) => {
+            await delay(200);
+            const reqIndex = requestsDB.findIndex(r => r.id === requestId);
+            if (reqIndex === -1) throw new Error("Request not found");
+            if (!['approved', 'rejected'].includes(newStatus)) throw new Error("Invalid status");
+            requestsDB[reqIndex].status = newStatus;
+            return requestsDB[reqIndex];
+        }
+    };
+
+    function delay(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    // -------------------------------
+    // FRONTEND CONTROLLER (UI + Backend binding)
+    // -------------------------------
+    const mentorsContainer = document.getElementById('mentorsListContainer');
+    const requestsContainer = document.getElementById('requestsListContainer');
+    const addMentorBtn = document.getElementById('createMentorBtn');
+    const mentorNameInput = document.getElementById('mentorNameInput');
+    const mentorExpertiseInput = document.getElementById('mentorExpertiseInput');
+    const mentorDomainSelect = document.getElementById('mentorDomainSelect');
+    const toastDiv = document.getElementById('globalToast');
+
+    let toastTimer = null;
+    function showMessage(msg, isError = false) {
+        toastDiv.textContent = msg || (isError ? "⚠️ Operation failed" : "✅ Success");
+        toastDiv.style.opacity = '1';
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toastDiv.style.opacity = '0';
+        }, 2600);
+    }
+
+    // Load mentors and render
+    async function loadMentors() {
+        try {
+            const mentors = await backendAPI.getAllMentors();
+            mentorsDB = mentors;  // sync local
+            renderMentors();
+        } catch (err) {
+            showMessage("Failed to load mentors: " + err.message, true);
+        }
+    }
+
+    // Load requests and render
+    async function loadRequests() {
+        try {
+            const requests = await backendAPI.getAllRequests();
+            requestsDB = requests;
+            renderRequests();
+        } catch (err) {
+            showMessage("Failed to load requests", true);
+        }
+    }
+
+    // Render mentor cards with Request button
+    function renderMentors() {
+        if (!mentorsContainer) return;
+        if (mentorsDB.length === 0) {
+            mentorsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-chalkboard"></i> No mentors yet — become a mentor!</div>`;
+            return;
+        }
+        mentorsContainer.innerHTML = mentorsDB.map(mentor => `
+            <div class="mentor-card" data-mentor-id="${mentor.id}">
+                <div class="mentor-header">
+                    <span class="mentor-name"><i class="fas fa-star-of-life" style="font-size:0.8rem;"></i> ${escapeHtml(mentor.name)}</span>
+                    <span class="expertise-tag">${escapeHtml(mentor.expertise)}</span>
+                </div>
+                <div class="mentor-meta">
+                    <span class="badge-domain"><i class="fas fa-tag"></i> ${escapeHtml(mentor.domain)}</span>
+                    <span class="badge-domain"><i class="far fa-calendar-alt"></i> Joined: ${new Date(mentor.createdAt).toLocaleDateString()}</span>
+                </div>
+                <button class="request-btn request-mentor-action" data-id="${mentor.id}" data-name="${escapeHtml(mentor.name)}">
+                    <i class="fas fa-handshake"></i> Request Mentorship
+                </button>
+            </div>
+        `).join('');
+
+        // Attach event listeners to request buttons
+        document.querySelectorAll('.request-mentor-action').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const mentorId = btn.getAttribute('data-id');
+                const mentorName = btn.getAttribute('data-name');
+                openRequestDialog(mentorId, mentorName);
+            });
+        });
+    }
+
+    // Custom dialog for mentorship request (simple & elegant)
+    function openRequestDialog(mentorId, mentorName) {
+        // create modal-like prompt but using window confirm + prompt? better use lightweight custom dialog using built-in? For clean UX: prompt combo
+        const studentName = prompt(`📚 Request mentorship from ${mentorName}\n\nEnter your full name:`);
+        if (!studentName) return;
+        const studentEmail = prompt(`✉️ Great! Please provide your email address for the mentor to contact you:\n(example: name@domain.com)`);
+        if (!studentEmail) return;
+        // call API to submit request
+        submitMentorshipRequest(mentorId, studentName, studentEmail);
+    }
+
+    async function submitMentorshipRequest(mentorId, studentName, studentEmail) {
+        try {
+            const newReq = await backendAPI.createRequest(mentorId, studentName, studentEmail);
+            showMessage(`✅ Request sent to mentor! (ID: ${newReq.id.slice(-6)})`);
+            await loadRequests();  // refresh requests panel instantly
+        } catch (err) {
+            showMessage(err.message || "Request failed, try again", true);
+        }
+    }
+
+    // Render requests with approve/reject functionality (mentor actions)
+    function renderRequests() {
+        if (!requestsContainer) return;
+        if (requestsDB.length === 0) {
+            requestsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-comment-dots"></i> No mentorship requests yet. Connect with a mentor!</div>`;
+            return;
+        }
+
+        // Enrich requests with mentor name
+        const enrichedRequests = requestsDB.map(req => {
+            const mentor = mentorsDB.find(m => m.id === req.mentorId);
+            return {
+                ...req,
+                mentorName: mentor ? mentor.name : "Unknown Mentor",
+                mentorExpertise: mentor ? mentor.expertise : ""
+            };
+        });
+
+        requestsContainer.innerHTML = enrichedRequests.map(req => `
+            <div class="request-card ${req.status}" data-req-id="${req.id}">
+                <div class="req-mentor-name">
+                    <i class="fas fa-chalkboard-user"></i> <strong>${escapeHtml(req.mentorName)}</strong>
+                    <span style="font-size:0.7rem;">(${escapeHtml(req.mentorExpertise)})</span>
+                </div>
+                <div class="req-student">
+                    <i class="fas fa-user-graduate"></i> ${escapeHtml(req.studentName)} · ${escapeHtml(req.studentEmail)}
+                </div>
+                <div>
+                    <span class="status-badge status-${req.status}">
+                        ${req.status === 'pending' ? '⏳ Pending' : (req.status === 'approved' ? '✅ Approved' : '❌ Rejected')}
+                    </span>
+                </div>
+                ${req.status === 'pending' ? `
+                    <div class="action-buttons">
+                        <button class="btn-approve" data-id="${req.id}"><i class="fas fa-check-circle"></i> Approve</button>
+                        <button class="btn-reject" data-id="${req.id}"><i class="fas fa-times-circle"></i> Decline</button>
+                    </div>
+                ` : (req.status === 'approved' ? `<div style="margin-top:0.6rem; font-size:0.7rem; color:#0f6e46;"><i class="fas fa-check-double"></i> Mentorship confirmed — connect via email</div>` : `<div style="margin-top:0.6rem; font-size:0.7rem; color:#b91c1c;"><i class="fas fa-ban"></i> Request declined</div>`)}
+            </div>
+        `).join('');
+
+        // attach approve and reject handlers
+        document.querySelectorAll('.btn-approve').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const reqId = btn.getAttribute('data-id');
+                await updateRequest(reqId, 'approved');
+            });
+        });
+        document.querySelectorAll('.btn-reject').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const reqId = btn.getAttribute('data-id');
+                await updateRequest(reqId, 'rejected');
+            });
+        });
+    }
+
+    async function updateRequest(requestId, newStatus) {
+        try {
+            const updated = await backendAPI.updateRequestStatus(requestId, newStatus);
+            showMessage(`Request ${newStatus === 'approved' ? 'approved ✓' : 'rejected'} successfully`);
+            await loadRequests();  // re-render request list
+        } catch (err) {
+            showMessage(err.message, true);
+        }
+    }
+
+    // Add new mentor via frontend -> backend
+    async function addNewMentor() {
+        const name = mentorNameInput.value.trim();
+        const expertise = mentorExpertiseInput.value.trim();
+        const domain = mentorDomainSelect.value;
+        if (!name || !expertise) {
+            showMessage("Please enter mentor name and expertise", true);
+            return;
+        }
+        try {
+            const added = await backendAPI.addMentor({ name, expertise, domain });
+            showMessage(`✨ Mentor "${added.name}" added successfully!`);
+            mentorNameInput.value = '';
+            mentorExpertiseInput.value = '';
+            mentorDomainSelect.value = 'Technology';
+            await loadMentors();   // refresh mentor list
+            // requests are independent, but no need to reload them
+        } catch (err) {
+            showMessage(err.message, true);
+        }
+    }
+
+    // Helper escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ---------- SEED DATA: to showcase working application ----------
+    async function seedDemoData() {
+        // Only seed if mentorsDB is empty
+        if (mentorsDB.length === 0) {
+            const demoMentors = [
+                { name: "Prof. Amelia Hart", expertise: "Full Stack & Cloud", domain: "Technology" },
+                { name: "Michael Okonkwo", expertise: "Venture Capital & Strategy", domain: "Business" },
+                { name: "Elena Rossi", expertise: "UI/UX & Product Design", domain: "Design" },
+                { name: "Dr. James Liu", expertise: "Machine Learning Engineering", domain: "Data Science" }
+            ];
+            for (const mentor of demoMentors) {
+                await backendAPI.addMentor(mentor);
+            }
+            // after seeding, create some demo requests for interactive preview
+            const currentMentors = await backendAPI.getAllMentors();
+            if (currentMentors.length >= 2) {
+                try {
+                    await backendAPI.createRequest(currentMentors[0].id, "Olivia Chen", "olivia.chen@student.edu");
+                    await backendAPI.createRequest(currentMentors[1].id, "Marcus Wright", "marcus.w@techstart.org");
+                    await backendAPI.createRequest(currentMentors[2].id, "Sophia Ramirez", "sophia.r@designlab.com");
+                } catch(e) { console.log("seed requests note:", e);}
+            }
+        }
+        await loadMentors();
+        await loadRequests();
+    }
+
+    // Event binding
+    addMentorBtn.addEventListener('click', addNewMentor);
+
+    // Initialize full-stack app
+    (async function init() {
+        await seedDemoData();
+    })();
+</script>
+</body>
+</html>
